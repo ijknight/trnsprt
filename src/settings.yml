@@ -4,16 +4,12 @@ no_screen_padding: 'no'
 dark_mode: 'no'
 static_data: ''
 polling_verb: get
-framework_version:
-serverless_language:
-refresh_interval_floor:
-polling_url: |-
-  https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}
-  https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_2 | default: stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}
-  {% if stop_id_2 != blank and stop_id_3 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_3 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}
-  {% if stop_id_2 != blank and stop_id_3 != blank and stop_id_4 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_4 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}
+framework_version: 3.4.4
+serverless_language: ''
+refresh_interval_floor: ''
+polling_url: "https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}\r\nhttps://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_2 | default: stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}\r\n{% if stop_id_2 != blank and stop_id_3 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_3 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}\r\n{% if stop_id_2 != blank and stop_id_3 != blank and stop_id_4 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_4 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}"
 polling_headers: Authorization=apikey {{ api_key }}&Accept=application/json
-polling_body:
+polling_body: ''
 id: 527397
 oauth_enabled: 'false'
 oauth_pkce_enabled: 'no'

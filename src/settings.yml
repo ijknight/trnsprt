@@ -1,0 +1,165 @@
+---
+strategy: polling
+no_screen_padding: 'no'
+dark_mode: 'no'
+static_data: ''
+polling_verb: get
+framework_version:
+serverless_language:
+refresh_interval_floor:
+polling_url: |-
+  https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}
+  https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_2 | default: stop_id_1 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}
+  {% if stop_id_2 != blank and stop_id_3 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_3 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}
+  {% if stop_id_2 != blank and stop_id_3 != blank and stop_id_4 != blank %}https://api.transport.nsw.gov.au/v1/tp/departure_mon?outputFormat=rapidJSON&coordOutputFormat=EPSG%3A4326&mode=direct&type_dm=stop&name_dm={{ stop_id_4 }}&depArrMacro=dep&TfNSWDM=true&limit={% if stop_id_4 != blank %}6{% elsif stop_id_3 != blank %}8{% else %}10{% endif %}{% endif %}
+polling_headers: Authorization=apikey {{ api_key }}&Accept=application/json
+polling_body:
+id: 527397
+oauth_enabled: 'false'
+oauth_pkce_enabled: 'no'
+custom_fields:
+- keyname: author_bio
+  field_type: author_bio
+  name: About This Plugin
+  description: Live departure boards for Sydney and NSW trains, metro, light rail, buses and ferries, in the style of the Copenhagen Metro. Show up to four stops, pick light or dark, and hide services you could not walk to in time. Data from <a href="https://opendata.transport.nsw.gov.au">Transport for NSW Open Data</a>.
+  category: travel,life
+  email_address: mail@ianknight.com.au
+  github_url: https://github.com/ijknight
+  learn_more_url: https://www.ianknight.com.au
+- keyname: api_key
+  field_type: password
+  name: TfNSW API key
+  description: Free key from <a href="https://opendata.transport.nsw.gov.au">opendata.transport.nsw.gov.au</a>. Create an account, add an application, add the <strong>Trip Planner APIs</strong> to it, then copy its <strong>API Key</strong> (not the Application ID).
+- keyname: time_display
+  field_type: select
+  name: Show departures as
+  description: Countdown shows minutes to go, but it is only as fresh as the last refresh. Clock shows the departure time, which never goes stale.
+  options:
+  - Countdown
+  - Clock
+  default: countdown
+- keyname: theme
+  field_type: select
+  name: Theme
+  description: Light is dark text on white. Dark is white text on black with grey row bands.
+  options:
+  - Light
+  - Dark
+  default: light
+- keyname: secondary_time
+  field_type: select
+  name: Show second time
+  description: The small line under each destination. In Countdown mode it shows the clock time; in Clock mode it shows the countdown. Hide it for a cleaner board.
+  options:
+  - Show
+  - Hide
+  default: show
+- keyname: min_ahead
+  field_type: select
+  name: Too soon to catch
+  description: Departures sooner than this many minutes are treated as too soon. Pick roughly how long it takes you to get to the stop.
+  options:
+  - 1 min
+  - 2 min
+  - 3 min
+  - 4 min
+  - 5 min
+  - 10 min
+  - 15 min
+  - 20 min
+  - 30 min
+  default: 1 min
+- keyname: too_soon_style
+  field_type: select
+  name: Show too-soon departures as
+  description: Hide removes them. Dim keeps them on the board in lighter type so you can still see what just left or is about to.
+  options:
+  - Hide
+  - Dim
+  default: hide
+- keyname: show_mode
+  field_type: select
+  name: Show mode label
+  description: Show Train, Metro, Bus, Light rail or Ferry at the right of each stop heading.
+  options:
+  - Hide
+  - Show
+  default: hide
+- keyname: stop_id_1
+  field_type: string
+  placeholder: '2204121'
+  name: Stop 1
+  description: Open <a href="https://transportnsw.info/stops">transportnsw.info/stops</a>, search for your stop, platform or wharf, and copy its Stop ID (5-7 digits). Stations have a separate ID for each platform, so pick the platform you want (e.g. Platform 1), not the station as a whole.
+  group: Stop 1
+- keyname: label_1
+  field_type: string
+  name: Heading
+  description: Replaces the automatic stop name.
+  group: Stop 1
+  optional: true
+- keyname: filter_1
+  field_type: string
+  name: Only these routes
+  description: Comma-separated, e.g. T4,T8,M1. Blank shows all.
+  group: Stop 1
+  optional: true
+- keyname: stop_id_2
+  field_type: string
+  placeholder: '2204121'
+  name: Stop 2
+  description: Stop ID of one platform, stand or wharf (5-7 digits). Fill stops in order.
+  group: Stop 2
+  optional: true
+- keyname: label_2
+  field_type: string
+  name: Heading
+  description: Replaces the automatic stop name.
+  group: Stop 2
+  optional: true
+- keyname: filter_2
+  field_type: string
+  name: Only these routes
+  description: Comma-separated, e.g. T4,T8,M1. Blank shows all.
+  group: Stop 2
+  optional: true
+- keyname: stop_id_3
+  field_type: string
+  placeholder: '2204121'
+  name: Stop 3
+  description: Stop ID of one platform, stand or wharf (5-7 digits). Fill stops in order.
+  group: Stop 3
+  optional: true
+- keyname: label_3
+  field_type: string
+  name: Heading
+  description: Replaces the automatic stop name.
+  group: Stop 3
+  optional: true
+- keyname: filter_3
+  field_type: string
+  name: Only these routes
+  description: Comma-separated, e.g. T4,T8,M1. Blank shows all.
+  group: Stop 3
+  optional: true
+- keyname: stop_id_4
+  field_type: string
+  placeholder: '2204121'
+  name: Stop 4
+  description: Stop ID of one platform, stand or wharf (5-7 digits). Fill stops in order.
+  group: Stop 4
+  optional: true
+- keyname: label_4
+  field_type: string
+  name: Heading
+  description: Replaces the automatic stop name.
+  group: Stop 4
+  optional: true
+- keyname: filter_4
+  field_type: string
+  name: Only these routes
+  description: Comma-separated, e.g. T4,T8,M1. Blank shows all.
+  group: Stop 4
+  optional: true
+name: TRNSPRT
+description: Live Transport NSW departure board
+refresh_interval: 15

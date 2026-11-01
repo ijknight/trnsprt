@@ -1,0 +1,246 @@
+<style>
+  /* TRMNL's own dark mode (device or plugin setting) flips the palette too */
+  .screen--dark-mode, .dark-mode { --tb-ink: #ffffff; --tb-paper: #000000; }
+  .tb-wrap, .tb-board { color: var(--tb-ink); font-family: Inter, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  .tb-wrap { width: 100%; height: 100%; align-items: stretch !important; justify-content: flex-start !important; }
+  .title_bar .tb-logo { color: var(--tb-ink); height: 100%; width: auto; }
+  .tb-wrap--grid { gap: 12px 22px; align-content: stretch; }
+  .tb-wrap--grid .tb-board { flex: 0 0 calc(50% - 11px); height: calc(50% - 6px); }
+  .tb-board { min-width: 0; min-height: 0; overflow: hidden; align-items: stretch; justify-content: flex-start; }
+  .tb-head { align-items: baseline; border-bottom: 4px solid var(--tb-ink); padding-bottom: 4px; }
+  .tb-name { font-size: 30px; font-weight: 700; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-mode { font-size: 13px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+  .tb-row { padding: 0 12px; min-height: 0; }
+  .tb-row--dim .tb-roundel { border-color: transparent; }
+  .tb-roundel { box-sizing: border-box; width: 58px; height: 58px; border-radius: 50%; border: 5px solid var(--tb-ink); font-weight: 800; font-size: 22px; line-height: 1; }
+  .tb-roundel--long { font-size: 17px; }
+  .tb-roundel--rail:not(.tb-roundel--dim) { background: var(--tb-ink); color: var(--tb-paper); }
+  .tb-roundel--ferry { border-radius: 10px; }
+  .tb-text { min-width: 0; }
+  .tb-dest { font-size: 28px; font-weight: 700; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-sub { font-size: 17px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-min { text-align: right; font-size: 46px; font-weight: 700; line-height: 1; }
+  .tb-min small { font-size: 17px; font-weight: 600; margin-left: 2px; }
+  .tb-empty { flex: 1; min-height: 0; padding: 8px 12px; gap: 6px; text-align: center; overflow: hidden; }
+  .tb-empty-icon { width: 56px; height: 56px; flex: none; color: var(--tb-ink); }
+  .tb-empty-title { font-size: 24px; font-weight: 700; line-height: 1.15; }
+  .tb-empty-sub { font-size: 16px; line-height: 1.25; }
+  .tb--m .tb-empty-icon { width: 44px; height: 44px; }
+  .tb--m .tb-empty-title { font-size: 20px; }
+  .tb--m .tb-empty-sub { font-size: 14px; }
+  .tb--s .tb-empty-icon { width: 36px; height: 36px; }
+  .tb--s .tb-empty-title { font-size: 18px; }
+  .tb--s .tb-empty-sub { font-size: 14px; }
+  .tb--xs .tb-empty { padding: 4px 6px; gap: 2px; }
+  .tb--xs .tb-empty-icon { display: none; }
+  .tb--xs .tb-empty-title { font-size: 13px; }
+  .tb--xs .tb-empty-sub { font-size: 11px; }
+  /* TRMNL X landscape is larger than the 800x480 the sizes above were drawn for */
+  .screen--lg:not(.screen--portrait) .tb-wrap { zoom: 1.3; }
+  /* portrait: stack the boards in one column; narrow OG portrait also shrinks a little */
+  .screen--portrait .tb-wrap:not(.tb-wrap--hh) { flex-direction: column; flex-wrap: nowrap; gap: 14px; }
+  .screen--portrait .tb-wrap--hh { flex-direction: row; flex-wrap: wrap; gap: 12px 14px; align-content: stretch; }
+  .screen--portrait .tb-wrap--hh .tb-board { flex: 1 1 calc(50% - 7px); height: auto; }
+  .screen--portrait .tb-wrap:not(.tb-wrap--hh) .tb-board { flex: 1; height: auto; }
+  .screen--portrait:not(.screen--lg) .tb-wrap { zoom: .75; }
+  .tb--m .tb-row { padding: 0 10px; }
+  .tb--m .tb-name { font-size: 24px; }
+  .tb--m .tb-roundel { width: 46px; height: 46px; border-width: 4px; font-size: 18px; }
+  .tb--m .tb-roundel--long { font-size: 14px; }
+  .tb--m .tb-dest { font-size: 22px; }
+  .tb--m .tb-sub { font-size: 14px; }
+  .tb--m .tb-min { font-size: 36px; }
+  .tb--m .tb-min small { font-size: 14px; }
+  .tb--s .tb-row { padding: 0 8px; }
+  .tb--s .tb-name { font-size: 20px; }
+  .tb--s .tb-roundel { width: 36px; height: 36px; border-width: 3px; font-size: 15px; }
+  .tb--s .tb-roundel--long { font-size: 12px; }
+  .tb--s .tb-dest { font-size: 18px; }
+  .tb--s .tb-sub { font-size: 12px; }
+  .tb--s .tb-min { font-size: 28px; }
+  .tb--s .tb-min small { font-size: 12px; }
+  .tb--xs .tb-head { border-bottom-width: 3px; padding-bottom: 2px; }
+  .tb--xs .tb-name { font-size: 16px; }
+  .tb--xs .tb-mode { font-size: 9px; }
+  .tb--xs .tb-row { gap: 7px; padding: 0 6px; }
+  .tb--xs .tb-roundel { width: 30px; height: 30px; border-width: 3px; font-size: 12px; }
+  .tb--xs .tb-roundel--long { font-size: 10px; }
+  .tb--xs .tb-dest { font-size: 14px; }
+  .tb--xs .tb-sub { font-size: 10px; }
+  .tb--xs .tb-min { font-size: 21px; }
+  .tb--xs .tb-min small { font-size: 10px; }
+</style>
+
+{% template stop_board %}
+{% assign nowts = "now" | date: "%s" | plus: 0 %}
+{% assign shown = 0 %}
+{% assign nf = 0 %}
+{% assign ns = 0 %}
+{% assign next_soon = nil %}
+{% assign first = data.stopEvents | first %}
+{% comment %} Only show the platform/stand label when it differs between departures. {% endcomment %}
+{% assign firstp = first.location.properties.platform | default: first.location.disassembledName %}
+{% assign varied = false %}
+{% for ev in data.stopEvents %}
+  {% assign p = ev.location.properties.platform | default: ev.location.disassembledName %}
+  {% if p != firstp %}{% assign varied = true %}{% break %}{% endif %}
+{% endfor %}
+{% case first.transportation.product.class %}
+  {% when 1 %}{% assign mode = "Train" %}
+  {% when 2 %}{% assign mode = "Metro" %}
+  {% when 4 %}{% assign mode = "Light rail" %}
+  {% when 9 %}{% assign mode = "Ferry" %}
+  {% when 5 or 11 or 7 %}{% assign mode = "Bus" %}
+  {% else %}{% assign mode = "" %}
+{% endcase %}
+{% if label != blank %}
+  {% assign heading = label %}
+{% elsif first %}
+  {% assign parts = first.location.name | split: ", " %}
+  {% assign keep = parts.size | minus: 1 %}
+  {% assign heading = parts | slice: 0, keep | join: ", " %}
+{% else %}
+  {% assign heading = data.locations[0].name | split: ", " | first %}
+  {% if heading == blank %}{% assign heading = "Stop " | append: stop_id %}{% endif %}
+{% endif %}
+<div class="tb-board tb--{{ size }} flex flex--col grow basis--0">
+  <div class="tb-head flex flex--between gap--[8px]"><span class="tb-name">{{ heading | truncate: 40 }}</span>{% if show_mode %}<span class="tb-mode flex-none">{{ mode }}</span>{% endif %}</div>
+  {% for ev in data.stopEvents %}
+    {% assign route = ev.transportation.disassembledName | default: ev.transportation.number %}
+    {% if filter != blank %}
+      {% assign wanted = filter | remove: " " | split: "," %}
+      {% unless wanted contains route %}{% assign nf = nf | plus: 1 %}{% continue %}{% endunless %}
+    {% endif %}
+    {% if shown >= n %}{% break %}{% endif %}
+    {% assign dep = ev.departureTimeEstimated | default: ev.departureTimePlanned %}
+    {% assign mins = dep | date: "%s" | minus: nowts | divided_by: 60 %}
+    {% assign plannedts = ev.departureTimePlanned | date: "%s" | plus: 0 %}
+    {% assign delay = dep | date: "%s" | minus: plannedts | divided_by: 60 %}
+    {% if mins < 0 %}{% continue %}{% endif %}
+    {% assign soon = false %}
+    {% if mins < min_ahead %}
+      {% if dim_soon %}{% assign soon = true %}{% else %}{% assign ns = ns | plus: 1 %}{% if next_soon == nil or mins < next_soon %}{% assign next_soon = mins %}{% endif %}{% continue %}{% endif %}
+    {% endif %}
+    {% assign shown = shown | plus: 1 %}
+    {% assign band = shown | modulo: 2 %}
+    {% assign c = ev.transportation.product.class %}
+    {% assign shape = "bus" %}
+    {% if c == 1 or c == 2 or c == 4 %}{% assign shape = "rail" %}{% elsif c == 9 %}{% assign shape = "ferry" %}{% endif %}
+    {% assign plat = ev.location.properties.platform | default: ev.location.disassembledName | split: "Platform " | last | split: ", " | last %}
+    {% if c == 2 and plat.size > 1 %}{% assign plat = plat | slice: -1 %}{% endif %}
+    <div class="tb-row flex flex--center-y grow basis--0 gap--[12px]{% if band == 0 %}{% if dark %} bg--gray-25{% else %} bg--gray-70{% endif %}{% endif %}{% if soon %} tb-row--dim{% endif %}">
+      <div class="tb-roundel flex flex--center-x flex--center-y flex-none tb-roundel--{{ shape }}{% if route.size > 2 %} tb-roundel--long{% endif %}{% if soon %} tb-roundel--dim{% if dark %} bg--gray-35 text--gray-65{% else %} bg--gray-60 text--gray-30 dark:bg--gray-35 dark:text--gray-65{% endif %}{% endif %}">{{ route }}</div>
+      <div class="tb-text grow basis--0">
+        <div class="tb-dest{% if soon %}{% if dark %} text--gray-60{% else %} text--gray-45 dark:text--gray-30{% endif %}{% endif %}">{{ ev.transportation.destination.name | split: " via" | first | replace: " Station", "" | truncate: 36 }}</div>
+        {% capture where %}{% if varied and plat != blank %}{% if c == 1 or c == 2 or c == 4 %}Platform{% else %}Stop{% endif %} {{ plat }}{% endif %}{% endcapture %}
+        {% capture sched %}{% if delay > 1 or delay < -1 %}Sched {{ ev.departureTimePlanned | date: "%s" | plus: utc_offset | date: "%H:%M" }}{% endif %}{% endcapture %}
+        {% assign sub = "" %}
+        {% if secondary %}
+          {% if clock %}
+            {% capture sub %}{% if mins == 0 %}Now{% elsif mins >= 60 %}in {{ mins | divided_by: 60 }}h {{ mins | modulo: 60 }}m{% else %}in {{ mins }} min{% endif %}{% endcapture %}
+          {% else %}
+            {% capture sub %}{{ dep | date: "%s" | plus: utc_offset | date: "%H:%M" }}{% endcapture %}
+          {% endif %}
+        {% endif %}
+        {% if clock and sched != blank %}{% if sub != blank %}{% assign sub = sub | append: " · " %}{% endif %}{% assign sub = sub | append: sched %}{% endif %}
+        {% if where != blank %}{% if sub != blank %}{% assign sub = sub | append: " · " %}{% endif %}{% assign sub = sub | append: where %}{% endif %}
+        <div class="tb-sub{% if soon %}{% if dark %} text--gray-60{% else %} text--gray-45 dark:text--gray-30{% endif %}{% endif %}">{{ sub }}</div>
+      </div>
+      <div class="tb-min flex-none{% if soon %}{% if dark %} text--gray-60{% else %} text--gray-45 dark:text--gray-30{% endif %}{% endif %}">{% if clock %}{{ dep | date: "%s" | plus: utc_offset | date: "%H:%M" }}{% elsif mins == 0 %}Now{% elsif mins >= 60 %}{{ dep | date: "%s" | plus: utc_offset | date: "%H:%M" }}{% else %}{{ mins }}<small>min</small>{% endif %}</div>
+    </div>
+  {% endfor %}
+  {% if shown == 0 %}
+    {% if data.stopEvents == nil %}
+      {% assign msg = data.ErrorDetails.Message | downcase %}
+      {% if msg contains "unauthenticated" or msg contains "unauthorized" %}
+        {% render "empty_state", kind: "alert", title: "API key not accepted", sub: "Check it in the plugin settings." %}
+      {% else %}
+        {% render "empty_state", kind: "alert", title: "Couldn't load this stop", sub: "Check the stop ID in the plugin settings." %}
+      {% endif %}
+    {% elsif data.stopEvents.size == 0 %}
+      {% render "empty_state", kind: "clock", title: "No services right now", sub: "Nothing is due to leave this stop soon." %}
+    {% elsif ns > 0 %}
+      {% capture soon_sub %}Next one leaves in {{ next_soon }} min, sooner than your {{ min_ahead }} min.{% endcapture %}
+      {% render "empty_state", kind: "clock", title: "Nothing you can catch yet", sub: soon_sub %}
+    {% elsif nf > 0 %}
+      {% capture filter_sub %}Nothing on {{ filter | remove: " " | replace: ",", ", " }} is due soon.{% endcapture %}
+      {% render "empty_state", kind: "clock", title: "No matching services", sub: filter_sub %}
+    {% else %}
+      {% render "empty_state", kind: "clock", title: "No upcoming departures", sub: "" %}
+    {% endif %}
+  {% endif %}
+</div>
+{% endtemplate %}
+
+{% template empty_state %}
+<div class="tb-empty flex flex--col flex--center-x flex--center-y">
+  <svg class="tb-empty-icon" viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="215" fill="none" stroke="currentColor" stroke-width="26"/>{% if kind == "alert" %}<rect x="236" y="130" width="40" height="170" rx="20" fill="currentColor"/><circle cx="256" cy="364" r="24" fill="currentColor"/>{% else %}<path d="M256 140 V256 L336 304" fill="none" stroke="currentColor" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>{% endif %}</svg>
+  <div class="tb-empty-title">{{ title }}</div>
+  {% if sub != blank %}<div class="tb-empty-sub">{{ sub }}</div>{% endif %}
+</div>
+{% endtemplate %}
+
+{% template stop_boards %}
+{% comment %} How many stops the user chose (they fill them in order). {% endcomment %}
+{% assign count = 1 %}
+{% if cf.stop_id_2 != blank %}{% assign count = 2 %}
+  {% if cf.stop_id_3 != blank %}{% assign count = 3 %}
+    {% if cf.stop_id_4 != blank %}{% assign count = 4 %}{% endif %}
+  {% endif %}
+{% endif %}
+{% assign clock = false %}
+{% assign td = cf.time_display | downcase %}
+{% if td == "clock" %}{% assign clock = true %}{% endif %}
+{% assign min_ahead = cf.min_ahead | default: "1" | split: " " | first | plus: 0 %}
+{% assign dim_soon = false %}
+{% assign ts = cf.too_soon_style | downcase %}
+{% if ts == "dim" %}{% assign dim_soon = true %}{% endif %}
+{% assign secondary = true %}
+{% assign st = cf.secondary_time | downcase %}
+{% if st == "hide" %}{% assign secondary = false %}{% endif %}
+{% assign show_mode = false %}
+{% assign sm = cf.show_mode | downcase %}
+{% if sm == "show" %}{% assign show_mode = true %}{% endif %}
+{% assign dark = false %}
+{% assign th = cf.theme | downcase %}
+{% if th == "dark" %}{% assign dark = true %}{% endif %}
+{% assign wrap = "tb-wrap flex flex--row gap--[22px]" %}
+{% assign size = "s" %}
+{% assign n = 3 %}
+{% case layout %}
+  {% when "full" %}
+    {% if count == 1 %}{% assign size = "" %}{% assign n = 5 %}{% elsif count == 2 %}{% assign size = "m" %}{% assign n = 5 %}{% else %}{% assign wrap = "tb-wrap tb-wrap--grid flex flex--row flex--wrap gap--[22px]" %}{% endif %}
+  {% when "half_horizontal" %}
+    {% assign wrap = wrap | append: " tb-wrap--hh" %}
+    {% if count >= 3 %}{% assign size = "xs" %}{% endif %}
+  {% when "half_vertical" %}
+    {% assign wrap = "tb-wrap flex flex--col gap--[10px]" %}
+    {% if count >= 3 %}{% assign size = "xs" %}{% assign n = 2 %}{% endif %}
+  {% when "quadrant" %}
+    {% if count >= 2 %}{% assign size = "xs" %}{% assign count = 2 %}{% endif %}
+{% endcase %}
+<style>
+  :root { --tb-ink: {% if dark %}#ffffff{% else %}#000000{% endif %}; --tb-paper: {% if dark %}#000000{% else %}#ffffff{% endif %}; }
+  {% if dark %}.screen, .view { background: #000000; }
+  .title_bar { background: #000000; box-shadow: inset 0 0 0 2px #ffffff; } .title_bar .title, .title_bar .instance { color: #ffffff; }{% endif %}
+</style>
+{% if cf.stop_id_1 == blank %}
+<div class="layout {{ wrap }}">
+  <div class="tb-board tb--{{ size }} flex flex--col grow basis--0">
+    {% render "empty_state", kind: "alert", title: "Add a stop to get started", sub: "Open the plugin settings and enter a stop ID. Find one at transportnsw.info/stops." %}
+  </div>
+</div>
+{% else %}
+<div class="layout {{ wrap }}">
+  {% render "stop_board", data: d0, stop_id: cf.stop_id_1, label: cf.label_1, filter: cf.filter_1, n: n, size: size, clock: clock, show_mode: show_mode, secondary: secondary, min_ahead: min_ahead, dim_soon: dim_soon, dark: dark, utc_offset: utc_offset %}
+  {% if count >= 2 %}{% render "stop_board", data: d1, stop_id: cf.stop_id_2, label: cf.label_2, filter: cf.filter_2, n: n, size: size, clock: clock, show_mode: show_mode, secondary: secondary, min_ahead: min_ahead, dim_soon: dim_soon, dark: dark, utc_offset: utc_offset %}{% endif %}
+  {% if count >= 3 %}{% render "stop_board", data: d2, stop_id: cf.stop_id_3, label: cf.label_3, filter: cf.filter_3, n: n, size: size, clock: clock, show_mode: show_mode, secondary: secondary, min_ahead: min_ahead, dim_soon: dim_soon, dark: dark, utc_offset: utc_offset %}{% endif %}
+  {% if count >= 4 %}{% render "stop_board", data: d3, stop_id: cf.stop_id_4, label: cf.label_4, filter: cf.filter_4, n: n, size: size, clock: clock, show_mode: show_mode, secondary: secondary, min_ahead: min_ahead, dim_soon: dim_soon, dark: dark, utc_offset: utc_offset %}{% endif %}
+</div>
+{% endif %}
+{% endtemplate %}
+
+{% template title_bar %}
+{% assign localts = "now" | date: "%s" | plus: utc_offset %}
+<div class="title_bar"><svg class="image tb-logo" viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="215" fill="none" stroke="currentColor" stroke-width="26"/><rect x="176" y="124" width="160" height="210" rx="34" fill="none" stroke="currentColor" stroke-width="22"/><rect x="200" y="158" width="112" height="74" rx="10" fill="currentColor"/><circle cx="216" cy="288" r="15" fill="currentColor"/><circle cx="296" cy="288" r="15" fill="currentColor"/><path d="M208 340 L180 382 M304 340 L332 382" fill="none" stroke="currentColor" stroke-width="22" stroke-linecap="round"/></svg>{% unless layout == "quadrant" or layout == "half_vertical" %}<span class="title">TRNSPRT</span>{% endunless %}<span class="instance">Updated {{ localts | date: "%H:%M" }}{% if layout == "full" or layout == "half_horizontal" %} · {{ localts | date: "%a %-d %b" }}{% endif %}</span></div>
+{% endtemplate %}
